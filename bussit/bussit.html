@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html>
+<head> 
+    <title>Bussit</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="keywords" content="bussit kartalla turku, bussit turku, bussikartta turku">
+	
+	<link rel="icon" type="image/png" href="icons/fav.png" />
+	<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ==" crossorigin=""/>
+    <link rel="stylesheet" href="bussit.css">
+    <link rel="stylesheet" href="nappula.css">
+
+    
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg==" crossorigin=""></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="lista.js"></script>
+<script type="text/javascript" src="funktiot.js"></script>
+<script type="text/javascript" src="controls.js"></script>
+
+
+
+
+ 
+
+
+
+
+ 
+		
+<style>
+html, body, #map {
+width:100%;
+height:100%;
+padding:0px;
+margin:0px;
+font: 12px Verdana
+} 
+
+
+
+</style>
+	
+</head>
+<body>	
+
+
+<div id="map" style="width: 100%; height: 100%;"></div>
+
+<script type="text/javascript" src="search.js"></script>
+<link rel="stylesheet" href="search.css">
+
+<script>
+
+// Kartan määrittelyt
+
+
+    var osmLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>',
+            thunLink = '<a href="http://thunderforest.com/">Thunderforest</a>',
+            leafletLink = '<a href="http://leafletjs.com/">Leaflet</a>',
+            MMLLink = '<a href="http://maanmittauslaitos.fi/">Maanmittauslaitos</a>';
+        
+        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            osmAttrib = '&copy; ' + osmLink + ' Contributors' + ' Tietolähde http://data.foli.fi/ lisenssillä Creative Commons Nimeä 4.0 Kansainvälinen (CC BY 4.0).',
+            landUrl = 'http://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png',
+            thunAttrib = '&copy; '+osmLink+' Contributors & '+thunLink,
+            leafletUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
+            leafletAttrib = '&copy; ' + leafletLink + ' Contributors',
+            MMLPerusUrl = 'http://tiles.kartat.kapsi.fi/peruskartta/{z}/{x}/{y}.jpg',
+            MMLAttrib = '&copy; ' + MMLLink + ' Contributors',
+            
+            MMLTaustaUrl = 'http://tiles.kartat.kapsi.fi/taustakartta/{z}/{x}/{y}.jpg',
+            MMLOrtoUrl = 'http://tiles.kartat.kapsi.fi/ortokuva/{z}/{x}/{y}.jpg';
+
+        var osmMap = L.tileLayer(osmUrl, {attribution: osmAttrib}),
+            landMap = L.tileLayer(landUrl, {attribution: thunAttrib});
+            leafletMap = L.tileLayer(leafletUrl, {attribution: leafletAttrib}),
+            MMLPerusMap = L.tileLayer(MMLPerusUrl, {attribution: MMLAttrib}),
+            MMLTaustaMap = L.tileLayer(MMLTaustaUrl, {attribution: MMLAttrib}),
+            MMLOrtoMap = L.tileLayer(MMLOrtoUrl, {attribution: MMLAttrib});
+
+        var baseLayers = {
+            "Leaflet": leafletMap,
+			"OSM Mapnik": osmMap,
+			"Landscape": landMap,
+			"MML Maasto" : MMLPerusMap,
+			"MML Tausta" : MMLTaustaMap,
+			"MML Ilmakuva" : MMLOrtoMap
+		};
+
+	var map = L.map('map',{
+			    layers: [osmMap] 
+		    }).setView([60.457541, 22.282756], 12);
+
+	L.tileLayer(leafletUrl, {
+		maxZoom: 18,
+		id: 'mapbox.streets'
+	}).addTo(map);
+
+	L.control.layers(baseLayers).addTo(map);
+	
+	
+
+
+
+
+legend.addTo(map);	
+search.addTo(map);
+
+//setButtonColors();
+
+var num, dest, lat, lon, id, op, busNumber, icon;
+var markersLayer = new L.LayerGroup();	//layer contain searched elements
+	
+	map.addLayer(markersLayer);
+
+	var controlSearch = new L.Control.Search({
+		position:'topright',		
+		layer: markersLayer,
+		initial: false,
+		zoom: 18,
+		marker: false
+	});
+
+	map.addControl( controlSearch );
+
+var followList = all + inner;
+
+
+
+function getData(){
+$.ajax({
+  url: 'http://data.foli.fi/siri/vm',
+  dataType: 'json',
+  async: false,
+  success: function(data) {
+   for (var ref in data.result.vehicles){
+num = data.result.vehicles[ref].publishedlinename;
+dest = data.result.vehicles[ref].destinationname;
+dep = new Date(data.result.vehicles[ref].originaimeddeparturetime*1000);
+id =  data.result.vehicles[ref].vehicleref;
+op = data.result.vehicles[ref].operatorref;
+busNumber = id.replace(op+"0","");
+lat = data.result.vehicles[ref].latitude;
+lon = data.result.vehicles[ref].longitude;
+
+//Poistaa etunollan
+if (busNumber.charAt(0)==0){
+busNumber = busNumber.replace("0","");
+}
+//Jos kaksi etunollaa, poistaa vielä toisen
+if (busNumber.charAt(0)==0){
+busNumber = busNumber.replace("0","");
+}
+
+
+setPlateNum(id);
+setOperator(op);
+// Oikeanvärisen pömpylän valinta
+
+
+if (ordinary.includes(num)){
+    icon = "icons/blue.png";
+    }
+if (service.includes(num)){
+    icon = 'icons/red.png';
+} 
+if (school.includes(num)){
+    icon = 'icons/yellow.png';
+}
+if (worker.includes(num)){
+    icon = 'icons/gray.png';
+}
+if (night.includes(num)){
+    icon = 'icons/black.png';
+}
+if (inner.includes(num)){
+    icon = 'icons/purple.png';
+} 
+
+
+
+
+
+
+// pömpylä
+var icon = icon;
+var myIcon = L.icon({
+iconUrl: icon,
+iconSize: [13, 13],
+shadowSize: [68, 95],
+shadowAnchor: [22, 94]
+});
+
+
+
+
+
+if (followList.includes(num)){
+var marker = L.marker([lat,lon], {icon: myIcon, title: id}).addTo(markersLayer);
+marker.bindPopup(num.bold() +" "+dest + "<br>"+ "Lähtö: "+ formatTime(dep.getHours(),dep.getMinutes())+"<br>"+ op +" " +busNumber + "<br>"+id.bold());
+}
+}
+
+}
+});
+}
+
+
+
+
+// päivittää automaattisesti sijainnit
+function autoupdate() {
+    markersLayer.clearLayers();
+    getData();
+	setTimeout("autoupdate()", 10000);
+	
+}
+
+
+autoupdate();
+
+
+</script>
+</body>
+</html>

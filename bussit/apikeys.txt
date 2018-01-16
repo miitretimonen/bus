@@ -1,0 +1,18 @@
+SL:	Ku1zQINHtZ5rw4JvA69s-aKcgWNiZBjWQjW9WoaZCLM=
+KA:	DwROgP-Stt6CfvtR-PhX7SCeEN3ZHVX-fAJcn3K_TFA=
+KL:	auhHqteyMMO-MCpEaGv2MZmkLFZY_6phdj9sWwx_8f0=
+GL:	joDoCfcx845GxrNwNuc6Z0nDeC3DisxAIdWap3P3Isc=
+JL:	NlzXqWFOACcqOgjuV0bYMdyWxZRmWsoq897iErsZ264=
+PL:	_WYXITRPKZffw-ynz5bcmbZgv25j2WbeR5Pxjgo2wrg=
+
+
+https://tinyurl.com/yawokkgd
+
+SL:
+https://v3.kiho.fi/openApi/tracking/getLastKnownLocations?v=1.0&client=Ku1zQINHtZ5rw4JvA69s-aKcgWNiZBjWQjW9WoaZCLM=
+
+Komia Liikenne: 
+https://v3.kiho.fi/openApi/tracking/getLastKnownLocations?client=nPe4MySJsZYW9vuUFQJoODxkLQoGH4LuYy7ywu4xmEE=&v=1.0
+
+
+https://v3.kiho.fi/public/refreshMap?map=953751&u=1516007137&line=&shift=&count=4&info=&SESSID=7cg2a0tp70romvso40ucbfdc12&_=1516007085546

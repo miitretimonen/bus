@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <title>Bussit</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="keywords" content="bussit kartalla turku, bussit turku, bussikartta turku">
+	
+	
+	<link rel="icon" type="image/png" href="icons/fav.png" />
+	<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ==" crossorigin=""/>
+    <link rel="stylesheet" href="bussit.css">
+    <link rel="stylesheet" href="nappula.css">
+	<link rel="stylesheet" href="search.css">
+	
+
+    
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg==" crossorigin=""></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="lista.js"></script>
+<script type="text/javascript" src="funktiot.js"></script>
+<script type="text/javascript" src="controls.js"></script>
+<script type="text/javascript" src="search.js"></script>
+<script type="text/javascript" src="mapOptions.js"></script>
+
+
+<style>
+html, body, #map {
+width:100%;
+height:100%;
+padding:0px;
+margin:0px;
+font: 12px Verdana
+} 
+
+
+
+</style>
+	
+</head>
+<body>	
+
+
+<div id="map" style="width: 100%; height: 100%;"></div>
+
+
+<script>
+
+
+var map = L.map('map',{layers: [osmMap] }).setView([60.457541, 22.282756], 12);
+
+		L.tileLayer(leafletUrl, {
+		maxZoom: 18,
+		id: 'mapbox.streets'
+		}).addTo(map);
+		L.control.layers(baseLayers).addTo(map);
+	
+	
+
+
+
+legend.addTo(map);	
+search.addTo(map);
+
+//setButtonColors();
+
+
+
+var markersLayer = new L.LayerGroup();	//layer contains searched elements
+	
+	map.addLayer(markersLayer);
+
+	var controlSearch = new L.Control.Search({
+		position:'topright',		
+		layer: markersLayer,
+		initial: false,
+		zoom: 18,
+		marker: false
+	});
+
+	map.addControl(controlSearch);
+	
+	
+
+
+
+
+
+
+function getData(){
+
+var ajax1 = $.ajax({
+  url: 'https://v3.kiho.fi/openApi/tracking/getLastKnownLocations?v=1.0&client=Ku1zQINHtZ5rw4JvA69s-aKcgWNiZBjWQjW9WoaZCLM=',
+  type:'GET',
+  dataType: 'json',
+  async: false
+  });
+
+var ajax2 = $.ajax({
+  url: 'http://data.foli.fi/siri/vm',
+  type:'GET',
+  dataType: 'json',
+  async: false
+  });
+  
+var ajax3 = $.ajax({
+  url: 'https://v3.kiho.fi/openApi/tracking/getLastKnownLocations?client=nPe4MySJsZYW9vuUFQJoODxkLQoGH4LuYy7ywu4xmEE=&v=1.0',
+  type:'GET',
+  dataType: 'json',
+  async: false
+  });
+
+function func(data1,data2,data3) {
+	
+  kabusData = data1;
+  foliData = data2;
+  komiaData = data3
+
+}
+
+$.when(ajax1,ajax2,ajax3).then(func);
+}
+
+
+
+
+var boo = false;
+
+function autoupdate() {
+    markersLayer.clearLayers();
+    getData();
+		showKabus(kabusData);
+		showFoli(foliData);
+		showKomia(komiaData);
+	
+	setTimeout("autoupdate()", 10000);
+	
+}
+
+
+autoupdate();
+
+
+</script>
+</body>
+</html>
